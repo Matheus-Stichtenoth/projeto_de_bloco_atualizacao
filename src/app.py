@@ -2,9 +2,20 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import json
+from utils import fetch_bcb_data, load_local_backup, calculate_indebtedness
+
+st.set_page_config(page_title="Inadimplência no Brasil", layout="wide")
+
+# Carregar os dados
+try:
+    df = fetch_bcb_data()
+except:
+    df = load_local_backup()
+
+df = calculate_indebtedness(df)
 
 # Carregar o arquivo GeoJSON dos estados brasileiros
-with open('data/br_states.geojson', 'r') as file:
+with open('data/brazil-states.geojson', 'r') as file:
     geojson_data = json.load(file)
 
 # Carregar os dados de inadimplência
