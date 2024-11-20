@@ -6,3 +6,5 @@ transformers
 httpie
 pydantic
 typing
+bs4
+plotly
