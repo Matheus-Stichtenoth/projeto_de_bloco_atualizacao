@@ -5,6 +5,7 @@ import json
 from utils import fetch_bcb_data, load_local_backup, calculate_indebtedness
 from services.page_curiosidades_llm import page_curiosidades_llm
 from services.page_map import page_map
+from services.page_home import page_home
 
 menu_lateral = [
     'Home',
@@ -20,8 +21,8 @@ def dashboard() -> None:
         page_curiosidades_llm()
     elif choice == 'Mapa de Inadimplência':
         page_map()
-    else:
-        st.image('data/capa_riskmap.png',width = 10000)
+    elif choice == 'Home':
+        page_home()
 
 if __name__ == '__main__':
     dashboard()
