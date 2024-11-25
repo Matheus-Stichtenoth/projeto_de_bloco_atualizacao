@@ -10,3 +10,4 @@ bs4
 plotly
 torch
 matplotlib
+nbformat>=4.2.0

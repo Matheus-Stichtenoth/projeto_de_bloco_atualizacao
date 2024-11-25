@@ -31,7 +31,7 @@ def page_dash():
     #INADIMPLENCIA POR ESTADO
     df_uf = df.groupby('ESTADO', as_index=False)[['VENCIDO_ACIMA_DE_15_DIAS','CARTEIRA']].sum()
     df_uf['INADIMPLENCIA'] = (df_uf['VENCIDO_ACIMA_DE_15_DIAS'] / df_uf['CARTEIRA']) *100
-    df_uf = df_uf.drop(columns=['VENCIDO_ACIMA_DE_15_DIAS','CARTEIRA']).sort_values('INADIMPLENCIA',ascending=False)
+    df_uf = df_uf.drop(columns=['VENCIDO_ACIMA_DE_15_DIAS','CARTEIRA']).sort_values('INADIMPLENCIA',ascending=True)
 
     #INADIMPLENCIA POR ESTADO - MAIOR INADIMPLENCIA DO BRASIL
     df_uf_max = df_uf[df_uf['INADIMPLENCIA'] == df_uf['INADIMPLENCIA'].max()]
@@ -56,14 +56,14 @@ def page_dash():
     delta_min_mean = df_uf_min["INADIMPLENCIA"].iloc[0] - df_uf_mean
 
     #INADIMPLENCIA POR CLIENTE
-    df_cliente = df.groupby('CLIENTE')[['CARTEIRA','VENCIDO_ACIMA_DE_15_DIAS']].sum()
+    df_cliente = df.groupby('CLIENTE',as_index=False)[['CARTEIRA','VENCIDO_ACIMA_DE_15_DIAS']].sum()
     df_cliente['INADIMPLENCIA'] = (df_cliente['VENCIDO_ACIMA_DE_15_DIAS'] / df_cliente['CARTEIRA']) * 100
-    df_cliente.drop(columns=['VENCIDO_ACIMA_DE_15_DIAS','CARTEIRA']).sort_values('INADIMPLENCIA',ascending=False)
+    df_cliente = df_cliente.sort_values('INADIMPLENCIA',ascending=True)
 
     #INADIMPLENCIA POR MODALIDADE
-    df_modalidade = df.groupby('MODALIDADE')[['CARTEIRA','VENCIDO_ACIMA_DE_15_DIAS']].sum()
+    df_modalidade = df.groupby('MODALIDADE',as_index=False)[['CARTEIRA','VENCIDO_ACIMA_DE_15_DIAS']].sum()
     df_modalidade['INADIMPLENCIA'] = (df_modalidade['VENCIDO_ACIMA_DE_15_DIAS']/df_modalidade['CARTEIRA']) *100
-    df_modalidade.drop(columns=['VENCIDO_ACIMA_DE_15_DIAS','CARTEIRA']).sort_values('INADIMPLENCIA',ascending=False)
+    df_modalidade = df_modalidade.sort_values('INADIMPLENCIA',ascending=True)
 
     ##CRIANDO COLUNAS E CONTAINERS
     with st.container():
@@ -76,27 +76,83 @@ def page_dash():
         c4.metric(label='Menor Inadimplência de um Estado', value=df_uf_min_metric, 
                   delta= f'{(delta_min_mean/100):.2%} - {df_uf_min_metric_uf}',delta_color='inverse')
 
+    area_barras, mapa = st.columns(2)
+
     ##CRIANDO GRÁFICOS##
-    # Criar o mapa coroplético
 
-    plt.figure(figsize=(30,30))
+    with area_barras:
+        barras_modalidade, barras_cliente, barras_estado = st.tabs(['Análise Modalidades','Análise Clientes','Análise Estados'])
 
-    fig = px.choropleth(
-        df_uf,
-        geojson=geojson_data,
-        locations='ESTADO',
-        featureidkey='properties.sigla',  # Mapeia o código UF do GeoJSON
-        color='INADIMPLENCIA',
-        color_continuous_scale='Reds',
-        title='Taxa de Inadimplência por Estado',
-        labels={'INADIMPLENCIA': 'Inadimplência (%)'}
-    )
+        with barras_modalidade:
+            df_modalidade["INADIMPLENCIA_FORMATADO"] = df_modalidade["INADIMPLENCIA"].apply(lambda x: f"{x:.2f}%")
+            
+            fig = px.bar(
+                data_frame=df_modalidade, 
+                x='INADIMPLENCIA',
+                y='MODALIDADE', 
+                orientation='h',
+                color_discrete_sequence=["#f5543c"],
+                text='INADIMPLENCIA_FORMATADO'
+            )
+            
+            fig.update_traces(textfont_size=16)
+            fig.update_layout(title="Inadimplência por Modalidade")
+            
+            st.plotly_chart(fig)
 
-    fig.update_geos(
-        fitbounds="locations",
-        visible=False
-    )
+        with barras_cliente:
+            df_cliente["INADIMPLENCIA_FORMATADO"] = df_cliente["INADIMPLENCIA"].apply(lambda x: f"{x:.2f}%")
+            
+            fig = px.bar(
+                data_frame=df_cliente, 
+                x='INADIMPLENCIA',
+                y='CLIENTE', 
+                orientation='h',
+                color_discrete_sequence=["#f5543c"],
+                text='INADIMPLENCIA_FORMATADO'
+            )
+            
+            fig.update_traces(textfont_size=16)
+            fig.update_layout(title="Inadimplência por Cliente")
+            
+            st.plotly_chart(fig)
 
-    # Exibir o gráfico no Streamlit
-    st.title("Mapa de Inadimplência")
-    st.plotly_chart(fig)
+        with barras_estado:
+            df_uf["INADIMPLENCIA_FORMATADO"] = df_uf["INADIMPLENCIA"].apply(lambda x: f"{x:.2f}%")
+            
+            fig = px.bar(
+                data_frame=df_uf, 
+                x='INADIMPLENCIA',
+                y='ESTADO', 
+                orientation='h',
+                color_discrete_sequence=["#f5543c"],
+                text='INADIMPLENCIA_FORMATADO'
+            )
+            
+            fig.update_traces(textfont_size=16)
+            fig.update_layout(title="Inadimplência por Modalidade")
+            
+            st.plotly_chart(fig)
+
+
+    with mapa:
+    
+        fig = px.choropleth(
+            df_uf,
+            geojson=geojson_data,
+            locations='ESTADO',
+            featureidkey='properties.sigla',  # Mapeia o código UF do GeoJSON
+            color='INADIMPLENCIA',
+            color_continuous_scale='Reds',
+            title='Taxa de Inadimplência por Estado',
+            labels={'INADIMPLENCIA': 'Inadimplência (%)'}
+        )
+
+        fig.update_geos(
+            fitbounds="locations",
+            visible=False
+        )
+
+        # Exibir o gráfico no Streamlit
+        st.subheader("Mapa de Inadimplência")
+        st.plotly_chart(fig)

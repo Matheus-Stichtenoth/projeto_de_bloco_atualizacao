@@ -15,8 +15,8 @@ from services.page_home import page_home
 
 menu_lateral = [
     'Home',
+    'Dashboard',
     'Curiosidades',
-    'Mapa de Inadimplência'
 ]
 
 st.image('data/titulo.png')
@@ -25,7 +25,7 @@ def dashboard() -> None:
     choice = st.sidebar.selectbox('Páginas', menu_lateral)
     if choice == 'Curiosidades':
         page_curiosidades_llm()
-    elif choice == 'Mapa de Inadimplência':
+    elif choice == 'Dashboard':
         page_dash()
     elif choice == 'Home':
         page_home()
