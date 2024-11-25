@@ -4,6 +4,8 @@ def page_home():
 
     st.image('data/capa_riskmap.png')
 
+    st.subheader('Para uma melhor experiência, utilize o formato "Wide" da tela, clicando em "Settings" e habilitando a opção.', divider='red')
+
     desenvolvedor, instituicao = st.columns(2)
 
     with desenvolvedor:
@@ -25,5 +27,3 @@ def page_home():
 
     with email_link:
         st.write('matheus.o.stichtenoth@gmail.com.br')
-
-##
