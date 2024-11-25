@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Adiciona o diretório do projeto ao caminho do Python
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
