@@ -51,23 +51,18 @@ def page_curiosidades_llm():
 
         return resumo_final
 
-    # Configuração do Streamlit
     st.title("Curiosidades de Inadimplência")
 
-    # Carregar os dados
     filepath = "data/informacoes_inadimplencia.csv"  # Atualize conforme necessário
     df = carregar_dados(filepath)
 
-    # Seleção do ano pelo usuário
     anos_disponiveis = ["2021", "2022", "2023", "2024"]
     ano_selecionado = st.selectbox("Selecione o ano para resumir as informações:", anos_disponiveis)
 
-    # Filtrar os dados pelo ano selecionado
     dados_filtrados = filtrar_por_ano(df, ano_selecionado)
 
     st.dataframe(dados_filtrados)
 
-    # Botões de download
     df_filtered, df_full = st.columns(2)
 
     with df_filtered:
@@ -84,19 +79,15 @@ def page_curiosidades_llm():
             file_name=f'curiosidades_inadimplencia.csv'
         )
 
-    # Sumarização com barra de progresso
     if st.button(f'Clique aqui para realizar um resumo das curiosidades de inadimplência em {ano_selecionado}'):
-        # Concatenar os textos do ano selecionado
         texto_completo = " ".join(dados_filtrados["conteudo"].tolist())
 
         with st.spinner('Gerando resumo, por favor aguarde... isso pode levar alguns segundos.'):
-            # Inicializar a barra de progresso
+            
             progress_bar = st.progress(0)
 
-            # Carregar o modelo de sumarização
             summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
-            # Gerar o resumo em camadas
             resumo_final = gerar_resumo_final(texto_completo, summarizer, progress_bar)
 
         # Exibir o resumo

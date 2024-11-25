@@ -95,7 +95,7 @@ def page_dash():
                 text='INADIMPLENCIA_FORMATADO'
             )
             
-            fig.update_traces(textfont_size=16)
+            fig.update_traces(textfont_size=16, textposition="outside")
             fig.update_layout(title="Inadimplência por Modalidade")
             
             st.plotly_chart(fig)
@@ -112,7 +112,7 @@ def page_dash():
                 text='INADIMPLENCIA_FORMATADO'
             )
             
-            fig.update_traces(textfont_size=16)
+            fig.update_traces(textfont_size=16, textposition="outside")
             fig.update_layout(title="Inadimplência por Cliente")
             
             st.plotly_chart(fig)
@@ -129,7 +129,7 @@ def page_dash():
                 text='INADIMPLENCIA_FORMATADO'
             )
             
-            fig.update_traces(textfont_size=16)
+            fig.update_traces(textfont_size=16, textposition="outside")
             fig.update_layout(title="Inadimplência por Modalidade")
             
             st.plotly_chart(fig)
