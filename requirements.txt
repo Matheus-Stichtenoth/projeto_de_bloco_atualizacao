@@ -9,3 +9,4 @@ typing
 bs4
 plotly
 torch
+matplotlib
