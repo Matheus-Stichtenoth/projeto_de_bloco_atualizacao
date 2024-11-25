@@ -10,7 +10,7 @@ import plotly.express as px
 import json
 from utils import fetch_bcb_data, load_local_backup, calculate_indebtedness
 from services.page_curiosidades_llm import page_curiosidades_llm
-from services.page_map import page_map
+from services.page_dash import page_dash
 from services.page_home import page_home
 
 menu_lateral = [
@@ -26,7 +26,7 @@ def dashboard() -> None:
     if choice == 'Curiosidades':
         page_curiosidades_llm()
     elif choice == 'Mapa de Inadimplência':
-        page_map()
+        page_dash()
     elif choice == 'Home':
         page_home()
 
