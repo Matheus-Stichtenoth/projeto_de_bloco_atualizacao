@@ -5,7 +5,7 @@ import pandas as pd
 def page_curiosidades_llm():
     @st.cache_data
     def carregar_dados(filepath: str):
-        return pd.read_csv(filepath)
+        return pd.read_csv(filepath, encoding = 'utf-8')
 
     def filtrar_por_ano(df, ano):
         df["Ano"] = df["Mês"].str.extract(r"(\d{4})")  # Extrai o ano do campo "Mês"
@@ -19,11 +19,11 @@ def page_curiosidades_llm():
         for i in range(0, len(palavras), max_words):
             yield " ".join(palavras[i:i + max_words])
 
-    def resumir_bloco(bloco, summarizer, max_length=200):
+    def resumir_bloco(bloco, summarizer, max_length=250):
         """
         Resume um único bloco de texto.
         """
-        return summarizer(bloco, max_length=max_length, min_length=200, do_sample=False)[0]["summary_text"]
+        return summarizer(bloco, max_length=max_length, min_length=150, do_sample=False)[0]["summary_text"]
 
     def gerar_resumo_final(texto, summarizer, progress_bar):
         """
@@ -85,19 +85,20 @@ def page_curiosidades_llm():
         )
 
     # Sumarização com barra de progresso
-    if st.checkbox(f'Clique aqui para realizar um resumo das curiosidades de inadimplência em {ano_selecionado}'):
+    if st.button(f'Clique aqui para realizar um resumo das curiosidades de inadimplência em {ano_selecionado}'):
         # Concatenar os textos do ano selecionado
         texto_completo = " ".join(dados_filtrados["conteudo"].tolist())
 
-        # Inicializar a barra de progresso
-        progress_bar = st.progress(0)
+        with st.spinner('Gerando resumo, por favor aguarde... isso pode levar alguns segundos.'):
+            # Inicializar a barra de progresso
+            progress_bar = st.progress(0)
 
-        # Carregar o modelo de sumarização
-        summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+            # Carregar o modelo de sumarização
+            summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
-        # Gerar o resumo em camadas
-        resumo_final = gerar_resumo_final(texto_completo, summarizer, progress_bar)
+            # Gerar o resumo em camadas
+            resumo_final = gerar_resumo_final(texto_completo, summarizer, progress_bar)
 
         # Exibir o resumo
         st.subheader("Resumo das Informações:")
-        st.write(resumo_final)
+        st.text(resumo_final)

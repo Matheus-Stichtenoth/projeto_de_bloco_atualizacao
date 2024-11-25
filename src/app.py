@@ -13,7 +13,7 @@ menu_lateral = [
     'Mapa de Inadimplência'
 ]
 
-st.image('data\Titulo.png')
+st.image('data/titulo.png')
 
 def dashboard() -> None:
     choice = st.sidebar.selectbox('Páginas', menu_lateral)
