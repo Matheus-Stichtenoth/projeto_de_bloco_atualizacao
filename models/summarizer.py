@@ -11,18 +11,7 @@ load_dotenv('.env')
 key_api_openai = os.environ["OPENAI_KEY"]
 modelo_openai = 'gpt-4o'
 
-def summarize_text(text: str):
-    """
-    Gera um resumo para o texto fornecido usando o modelo especificado.
-    
-    :param text: O texto a ser resumido.
-    :return: O resumo gerado.
-    """
-    summarizer = pipeline("summarization", model='facebook/bart-large-cnn')
-    summary = summarizer(text, do_sample=False)
-    return summary[0]["summary_text"]
-
-def summarize_text_openai(text: str):
+def summarize_text_openai_estados(text: str):
     """
     Gera um resumo para o texto fornecido usando o modelo especificado.
     
@@ -33,9 +22,34 @@ def summarize_text_openai(text: str):
         ('system','''
                 Você é uma ferramenta responsável por resumir artigos, textos e curiosidades sobre inadimplência.
                 Traga em tópicos as principais mudanças de mercado, quando houverem comparações.
+                O resultado final deve ser um texto de até 300 caracteres.
+                Não utilize tópicos durante o resumo.
                 Deixe claro os principais agravantes da inadimplência em cada ano, baseado no texto que você receber.
-                '''),
-        ('user','Traduza isso: {text}')
+                Traga apenas dados regionais que envolvam alguma região, estado ou cidade. Caso você não encontre informações regionais, Informe a seguinte mensagem: "Não foi possível encontrar dados regionais nos dados no ano selecionado".
+         '''),
+        ('user','Resuma isso: {text}')
+    ])
+    llm = ChatOpenAI(model = modelo_openai,api_key=key_api_openai)
+    response = llm.invoke(template.format_messages(text = text))
+    return response.content
+
+def summarize_text_openai_brasil(text: str):
+    """
+    Gera um resumo para o texto fornecido usando o modelo especificado.
+    
+    :param text: O texto a ser resumido.
+    :return: O resumo gerado.
+    """
+    template = ChatPromptTemplate([
+        ('system','''
+                Você é uma ferramenta responsável por resumir artigos, textos e curiosidades sobre inadimplência.
+                Traga em tópicos as principais mudanças de mercado, quando houverem comparações.
+                O resultado final deve ser um texto de até 300 caracteres.
+                Não utilize tópicos durante o resumo.
+                Deixe claro os principais agravantes da inadimplência em cada ano, baseado no texto que você receber.
+                Traga apenas dados gerais do Brasil, sem citar nenhum estado, região ou cidade.       
+         '''),
+        ('user','Resuma isso: {text}')
     ])
     llm = ChatOpenAI(model = modelo_openai,api_key=key_api_openai)
     response = llm.invoke(template.format_messages(text = text))

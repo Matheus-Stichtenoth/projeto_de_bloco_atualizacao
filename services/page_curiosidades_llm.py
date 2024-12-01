@@ -1,7 +1,7 @@
 from transformers import pipeline
 import streamlit as st
 import pandas as pd
-from models.summarizer import summarize_text_openai
+from models.summarizer import summarize_text_openai_brasil, summarize_text_openai_estados
 
 def page_curiosidades_llm():
     @st.cache_data
@@ -26,7 +26,7 @@ def page_curiosidades_llm():
         """
         return summarizer(bloco, max_length=max_length, min_length=150, do_sample=False)[0]["summary_text"]
 
-    def gerar_resumo_final(texto, summarizer, progress_bar):
+    def resumo_final_brasil(texto, summarizer, progress_bar):
         """
         Realiza o processo de resumo em múltiplas camadas:
         1. Divide o texto em blocos de 1024 palavras.
@@ -47,7 +47,33 @@ def page_curiosidades_llm():
         texto_concatenado = " ".join(resumos_parciais)
 
         # Segunda camada: Resumir o texto concatenado
-        resumo_final = summarize_text_openai(text = texto_concatenado)
+        resumo_final = summarize_text_openai_brasil(text = texto_concatenado)
+        progress_bar.progress(100)  # Finaliza a barra de progresso
+
+        return resumo_final
+    
+    def resumo_final_estados(texto, summarizer, progress_bar):
+        """
+        Realiza o processo de resumo em múltiplas camadas:
+        1. Divide o texto em blocos de 1024 palavras.
+        2. Resume cada bloco.
+        3. Concatena os resumos e gera um resumo final.
+        """
+        blocos = list(dividir_texto(texto))
+        total_blocos = len(blocos)
+        resumos_parciais = []
+
+        # Primeira camada: Resumir cada bloco
+        for idx, bloco in enumerate(blocos):
+            resumo_parcial = resumir_bloco(bloco, summarizer)
+            resumos_parciais.append(resumo_parcial)
+            progress_bar.progress(int(((idx + 1) / (total_blocos + 1)) * 100))  # Atualiza barra de progresso
+
+        # Concatenar os resumos dos blocos
+        texto_concatenado = " ".join(resumos_parciais)
+
+        # Segunda camada: Resumir o texto concatenado
+        resumo_final = summarize_text_openai_estados(text = texto_concatenado)
         progress_bar.progress(100)  # Finaliza a barra de progresso
 
         return resumo_final
@@ -74,7 +100,8 @@ def page_curiosidades_llm():
                  """)
 
     with c2:
-        st.dataframe(dados_filtrados)
+        dados_filtrados_plot = dados_filtrados.rename(columns={'conteudo': 'Curiosidades'})
+        st.dataframe(dados_filtrados_plot)
 
     df_filtered, df_full = st.columns(2)
 
@@ -92,17 +119,38 @@ def page_curiosidades_llm():
             file_name=f'curiosidades_inadimplencia.csv'
         )
 
-    if st.button(f'Clique aqui para realizar um resumo das curiosidades de inadimplência em {ano_selecionado}'):
-        texto_completo = " ".join(dados_filtrados["conteudo"].tolist())
+    st.markdown("<h1 style='text-align: center; color: #8084a2;'>Uso de LMM para resumo de curiosidades 🔎</h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #575a6e;'>Selecione abaixo a opção de resumo das curiosidades: </h2>", unsafe_allow_html=True)
+    c1_regioes, c2_brasil = st.columns(2)
 
-        with st.spinner('Gerando resumo, por favor aguarde... isso pode levar alguns segundos.'):
-            
-            progress_bar = st.progress(0)
+    with c2_brasil: 
+        if st.button(f'Resumo Nacional em {ano_selecionado}',key='resumo_brasil'):
+            texto_completo = " ".join(dados_filtrados["conteudo"].tolist())
 
-            summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+            with st.spinner('Gerando resumo, por favor aguarde... isso pode levar alguns segundos.'):
+                
+                progress_bar = st.progress(0)
 
-            resumo_final = gerar_resumo_final(texto_completo, summarizer, progress_bar)
+                summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
-        # Exibir o resumo
-        st.subheader("Resumo das Informações:")
-        st.text(resumo_final)
+                resumo_final = resumo_final_brasil(texto_completo, summarizer, progress_bar)
+
+            # Exibir o resumo
+            st.subheader("Resumo das Informações:")
+            st.text(resumo_final)
+
+    with c1_regioes:
+        if st.button(f'Resumo por Regiões e Estados em {ano_selecionado}', key = 'resumo_estados'):
+            texto_completo = " ".join(dados_filtrados["conteudo"].tolist())
+
+            with st.spinner('Gerando resumo, por favor aguarde... isso pode levar alguns segundos.'):
+                
+                progress_bar = st.progress(0)
+
+                summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+
+                resumo_final = resumo_final_estados(texto_completo, summarizer, progress_bar)
+
+            # Exibir o resumo
+            st.subheader("Resumo das Informações:")
+            st.text(resumo_final)
