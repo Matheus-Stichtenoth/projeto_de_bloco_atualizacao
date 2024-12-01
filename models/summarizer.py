@@ -9,7 +9,7 @@ import os
 load_dotenv('.env')
 
 key_api_openai = os.environ["OPENAI_KEY"]
-modelo_openai = 'gpt-4o'
+modelo_openai = 'gpt-3.5-turbo'
 
 def summarize_text_openai_estados(text: str):
     """
