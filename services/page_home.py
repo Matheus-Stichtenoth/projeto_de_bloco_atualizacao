@@ -2,6 +2,8 @@ import streamlit as st
 
 def page_home():
 
+    st.subheader('O seu portal de dados de inadimplência no Brasil!')
+
     st.image('data/capa_riskmap.png')
 
     st.subheader('Para uma melhor experiência, utilize o formato "Wide" da tela, clicando em "Settings" e habilitando a opção.', divider='red')

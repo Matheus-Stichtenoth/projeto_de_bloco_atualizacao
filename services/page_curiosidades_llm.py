@@ -1,6 +1,7 @@
 from transformers import pipeline
 import streamlit as st
 import pandas as pd
+from models.summarizer import summarize_text_openai
 
 def page_curiosidades_llm():
     @st.cache_data
@@ -46,7 +47,7 @@ def page_curiosidades_llm():
         texto_concatenado = " ".join(resumos_parciais)
 
         # Segunda camada: Resumir o texto concatenado
-        resumo_final = resumir_bloco(texto_concatenado, summarizer)
+        resumo_final = summarize_text_openai(text = texto_concatenado)
         progress_bar.progress(100)  # Finaliza a barra de progresso
 
         return resumo_final
@@ -61,7 +62,19 @@ def page_curiosidades_llm():
 
     dados_filtrados = filtrar_por_ano(df, ano_selecionado)
 
-    st.dataframe(dados_filtrados)
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.write("""
+                 As curiosidades observadas ao lado direito foram extraídas do Serasa. \n
+                 Todo mês o Serasa libera as principais informações da inadimplência no Brasil referente à esse mês. \n
+                 Para facilitar, já fiz o resumo desses dados para você :) \n
+                 Na tabela ao lado, você pode observar as curiosidades por ano, e abaixo, você pode fazer o download das curiosidades. \n
+                 Ao final da página, você têm a possibilidade de resumir as curiosidades daquele ano. Vamos tentar? Clique no botão para gerar o resumo.
+                 """)
+
+    with c2:
+        st.dataframe(dados_filtrados)
 
     df_filtered, df_full = st.columns(2)
 
