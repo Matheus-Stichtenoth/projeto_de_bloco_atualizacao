@@ -13,15 +13,32 @@ def page_dash():
     except:
         df = load_local_backup()
 
+    datas_disponiveis = [
+                        202309,
+                        202310, 
+                        202311, 
+                        202312,
+                        202401,
+                        202402,
+                        202403,
+                        202404,
+                        202405,
+                        202406,
+                        202407,
+                        202408,
+                        202409
+                         ]
+    
+    data_selecionada = st.selectbox("Selecione a database para resumir as informações:", datas_disponiveis)
+
+    df = df[df['DATA_BASE'] == data_selecionada]
+    df = df[df['ESTADO'] != 'NI']
+
     df = calculate_indebtedness(df)
 
     # Carregar o arquivo GeoJSON dos estados brasileiros
     with open('data/brazil-states.geojson', 'r') as file:
         geojson_data = json.load(file)
-
-    # Carregar os dados de inadimplência
-    df = pd.read_json('data/api_data.json')
-    df = df[df['ESTADO'] != 'NI']
 
     #INADIMPLENCIA TOTAL
     valores_totais = df[['CARTEIRA','VENCIDO_ACIMA_DE_15_DIAS']].sum()
