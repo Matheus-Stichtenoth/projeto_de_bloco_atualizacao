@@ -13,6 +13,12 @@ from services.page_curiosidades_llm import page_curiosidades_llm
 from services.page_dash import page_dash
 from services.page_home import page_home
 
+chave_configurada = os.getenv("OPENAI_KEY") is not None
+if not chave_configurada:
+    st.error("Erro: A chave da API OpenAI (OPENAI_KEY) não está configurada.")
+else:
+    st.write("Chave OpenAI configurada corretamente!")
+
 menu_lateral = [
     'Home',
     'Dashboard',
