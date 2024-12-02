@@ -1,0 +1,57 @@
+# Project Charter
+
+ATENÇÃO, A PARTIR DA FASE 13, O PROCESSO FOI REMODELADO PARA ENTREGAR OUTRA PROPOSTA
+
+## Business background
+
+Meus clientes serão os governadores, ministro da economia e cidadãos que gostariam de avaliar os dados 
+
+## Scope
+O problema que será resolvido é o acompanhamento da inadimplência do Brasil. Isso terá conexão com dados do Bacen.
+Os níveis de informação podem chegar em estado e modalidade, aprimorando a qualidade da análise
+
+## Personnel
+Apenas eu irei participar desse projeto.
+Sou o Matheus, tenho 21 anos e estou desenvolvendo meu conhecimento no ramo do sistema financeiro nacional.
+	
+## Metrics
+A métrica principal é que conseguiremos avaliar os estados que tiveram os melhores desempenhos na inadimplência, bem como seus principais agravantes também.
+
+## Plan
+Fase 1: Encontrar uma base de dados que nos forneça essas informações
+Fase 2: Extrai-la e trata-la para poder iniciar a modelagem de agrupamento
+Fase 3: Verificar os resultados
+Fase 4: Retornar para a modelagem e ajustar o que for necessário
+Fase 5: Criação do aplicativo
+
+Atualização TP2*
+
+Fase 6: Adicionar interatividade no projeto
+Fase 7: Melhorar a interface
+Fase 8: Trazer curiosidades sobre o assunto de inadimplência, com viés de informar os usuários finais sobre o assunto
+
+Atualização TP3*
+
+Fase 9: Utilização de Páginação para contar uma história que faça sentido, e deixe o aplicativo mais atrativo para os usuários, segmentando os assuntos
+Fase 10: Apontamento da página utilizada pra webscrapping não online, o arquivo está salvo offline
+Fase 11: Criação de API para acesso à base citada na fase 10. Rodará localmente, sem estar alocada a um servidor por enquanto
+Fase 12: Ideia de utilização de LLM no projeto, através de geração de textos baseado nas curiosidades da inadimplência.
+
+Atualização
+## Architecture
+Esperamos um dados que tenha a última atualização das carteiras de crédito do SFN, e com a atualização mais recente possível.
+Será feito o consumo através de uma API, ou seja, qualquer máquina e qualquer pessoa conseguirá rodar esse código para consumo da informação.
+
+Atualização TP4 e TP5
+## Restart
+O projeto foi recomeçado por conta da mudança do objetivo final da ferramenta.
+
+Fase 13: Recomeço, definindo novos objetivos e maneiras de alcança-lô.
+Fase 14: Construção do ambiente virtual e suas pastas para organização do modelo, algo que antes não estava implementado.
+Fase 15: Consumo dos dados do BACEN via webscrapping
+Fase 16: Consumo de curiosidades do Serasa, para utilizar no futuro LLM
+Fase 17: Criação do aplicativo streamlit com as páginas de: Home, Dash Nacional, Dash por Estados e Curiosidades
+Fase 18: Criação de rotas para API, tanto o método GET para mostrar os dados resultantes do Scrapping do Bacen, quanto POST para adicionar novos dados.
+Fase 19: Aprimoramento das páginas de dashboard
+Fase 20: Implementação do LLM de resumo. Foi utilizado para executar o resumo das curiosidades
+Fase 21: Inclusão da API da OpenAI para gerar um resumo mais humano.
