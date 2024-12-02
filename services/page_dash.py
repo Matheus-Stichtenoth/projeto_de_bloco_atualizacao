@@ -27,7 +27,7 @@ def page_dash():
                         202407,
                         202408,
                         202409
-                         ]
+                        ]
     
     data_selecionada = st.selectbox("Selecione a database para resumir as informações:", datas_disponiveis)
 
@@ -147,7 +147,7 @@ def page_dash():
             )
             
             fig.update_traces(textfont_size=16, textposition="outside")
-            fig.update_layout(title="Inadimplência por Modalidade")
+            fig.update_layout(title="Inadimplência por Estados")
             
             st.plotly_chart(fig)
 
