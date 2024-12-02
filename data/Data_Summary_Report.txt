@@ -1,0 +1,77 @@
+========================================
+         DATA SUMMARY REPORT
+========================================
+
+Projeto: Análise de Inadimplência no Brasil
+Data de Geração: 02/12/2024
+----------------------------------------
+
+1. **Descrição do Projeto**
+   O objetivo deste projeto é analisar os dados de inadimplência no Brasil utilizando dados públicos do Banco Central e do Serasa. As principais etapas do projeto incluem:
+   - Coleta de dados via API do Banco Central e scraping do Serasa.
+   - Processamento e análise de inadimplência por estado, modalidade e cliente.
+   - Resumo de curiosidades usando LLMs (Modelos de Linguagem Natural Locais e API).
+   - Visualização de dados em um dashboard interativo com Streamlit.
+
+----------------------------------------
+
+2. **Fonte dos Dados**
+   - API do Banco Central: [https://olinda.bcb.gov.br](https://olinda.bcb.gov.br)
+   - Serasa Limpa Nome: Dados obtidos via scraping.
+   - Arquivo Local: `data/api_data.json`
+
+----------------------------------------
+
+3. **Bases de Dados Utilizadas (todas presentes no diretório 'data/')**
+    - api_data.json: Consolida os dados de inadimplencia do Brasil entre setembro de 2023 e setembro de 2024 através de uma API do Bacen. Esse arquivo serve como backup caso a API não esteja online e também para fornecer os dados através do método GET.
+    - brazil-states.geojson: Arquivo necessário para aplicar o gráfico de mapa no Dashboard Nacional.
+    - informacoes_inadimplencia.csv: Curiosidades de inadimplência por mês no Brasil, feito pelo Serasa Limpa Nome. Dados consumidos via webscrapping.
+    - business_model_canva.png: Business Model Canva gerado e atualizado no decorrer do processo.
+    - Project_Charter.txt: Objetivos do projeto, mapeamento do desenvolvedor e registro de cada grande atualização/melhoria no aplicativo.
+    - capa_riskmap.png: Capa utilizada no streamlit.
+    - email_logo.png: Imagem da logo do e-mail. Utilizada na capa do trabalho.
+    - linkedin_logo.png: Imagem da logo do Linkedin. Utilizada na capa do trabalho.
+    - titulo.png: Imagem usada em todas as páginas do aplicativo para servir como cabeçalho.
+
+----------------------------------------
+
+4. **Metodologia**
+   **Coleta de Dados:**
+   - Dados obtidos via API e armazenados em JSON como backup.
+   - Scraping realizado com BeautifulSoup para capturar curiosidades do Serasa.
+
+   **Transformação de Dados:**
+   - Taxa de inadimplência calculada como:
+     `INADIMPLENCIA = VENCIDO_ACIMA_DE_15_DIAS / CARTEIRA`
+     Esse cálculo é padrão para todas as modalides, estados e cliente.
+
+   **Modelagem com LLMs:**
+   - Modelos utilizados: `facebook/bart-large-cnn` para resumos de blocos e `OpenAI GPT` para insights gerais e regionais. A OpenAI foi utilizada pois gera resumos mais humanos que o modelo bart utilizado para criar os chunks.
+
+----------------------------------------
+
+5. **LLM Insights**
+   **Resumo Nacional (Exemplo para 2023):**
+   Essa opção tentará focar em dados nacionais, trazendo os principais pontos de agravamento do Brasil.
+
+   **Resumo Regional (Exemplo para 2023):**
+   Essa opção tentará focar em dados regionais, trazendo algumas percepções de cada região. Esse ponto só será possível se o ano tiver curiosidades com identificação de estado, cidade ou região. 2024 é um exemplo que não se enquadra.
+
+----------------------------------------
+
+6. **Visualizações**
+   O dashboard inclui:
+   - **Gráficos de barras**: Inadimplência por modalidade e cliente.
+   - **Mapa interativo**: Taxa de inadimplência por estado.
+   - **Métricas principais**:
+     - Taxa de inadimplência total.
+     - Estados com maior e menor inadimplência.
+     - Evolução mensal.
+
+----------------------------------------
+
+7. **APIs Desenvolvidas**
+   Endpoint principal:
+   - **GET /dados**: Retorna o JSON com todos os dados processados.
+
+   Além dele, é possível utilizar o endpoint "POST /dados" para incluir uma informação no relatório do Bacen. Porém, esses dados já estão consolidados, e altera-lôs poderia confundir o relatório final.
